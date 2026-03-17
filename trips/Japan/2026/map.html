@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title>Optimized Japan Train Route + Sakura Overlay</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  html, body { margin:0; padding:0; height:100%; font-family: Arial, sans-serif; }
+  #map { height:100vh; width:100%; }
+  .pin {
+    background: #d93025;
+    color: white;
+    border-radius: 999px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  .legend {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 1000;
+    background: rgba(255,255,255,.96);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.16);
+    padding: 12px 14px;
+    max-width: 350px;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+  .legend h3 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+  }
+  .legend .row {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin: 6px 0;
+  }
+  .legend .swatch {
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    opacity: .8;
+    border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(0,0,0,.18);
+  }
+  .legend .line {
+    width: 28px;
+    height: 0;
+    border-top: 4px solid #2563eb;
+  }
+  .legend .small {
+    color: #444;
+    margin-top: 8px;
+    font-size: 12px;
+  }
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="legend">
+  <h3>Route + Sakura Overlay</h3>
+  <div class="row"><span class="line"></span><span>Optimized train route</span></div>
+  <div class="row"><span class="swatch" style="background:#ec4899"></span><span>Best around Mar 28–Apr 1</span></div>
+  <div class="row"><span class="swatch" style="background:#f59e0b"></span><span>Best around Apr 2–Apr 7</span></div>
+  <div class="row"><span class="swatch" style="background:#10b981"></span><span>Best around Apr 11–Apr 16</span></div>
+  <div class="row"><span class="swatch" style="background:#3b82f6"></span><span>Best around Apr 20–Apr 24</span></div>
+  <div class="small">
+    Trip start: <strong>Mar 28</strong><br>
+    Click any colored sakura zone for timing notes.
+  </div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map').setView([37.3, 137.8], 5);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  const stops = [["1 Hakodate \u2014 Mt. Hakodate Ropeway / Hachiman-Zaka", 41.7687, 140.7288], ["2 Aomori \u2014 Sannai-Maruyama Jomon Site", 40.8222, 140.7474], ["3 Kakunodate \u2014 Samurai District", 39.5933, 140.5533], ["4 Tono \u2014 Furusato Folk Village", 39.316, 141.533], ["5 Geibikei Gorge \u2014 Boat Ride", 38.998, 141.247], ["6 Sendai \u2014 Zuihoden Mausoleum", 38.2682, 140.8694], ["7 Matsushima Bay \u2014 Cruise", 38.373, 141.061], ["8 Zao Fox Village", 38.0, 140.62], ["9 Ginzan Onsen", 38.571, 140.527], ["10 Yamadera \u2014 Risshaku-ji", 38.311, 140.434], ["11 Aizu-Wakamatsu \u2014 Tsuruga Castle", 37.4947, 139.929], ["12 Ouchi-juku", 37.3075, 139.8744], ["13 Nikko \u2014 Toshogu / Kegon Falls", 36.757, 139.598], ["14 Tokyo \u2014 Shinjuku", 35.6895, 139.6917], ["15 Hakone", 35.232, 139.106], ["16 Kanazawa \u2014 Kenroku-en / Higashi Chaya", 36.561, 136.656], ["17 Amanohashidate", 35.5699, 135.1961], ["18 Ine Fishing Village \u2014 Funaya Boat Houses", 35.667, 135.2], ["19 Kyoto \u2014 Sakura / Bamboo Forest", 35.0116, 135.768], ["20 Nara \u2014 Park / Todai-ji", 34.685, 135.805], ["21 Osaka", 34.6937, 135.5023], ["22 Motonosumi Shrine", 34.402, 131.061], ["23 Hiroshima \u2014 Peace Park / Dome", 34.3955, 132.4536], ["24 Miyajima \u2014 Itsukushima / Mt. Misen", 34.295, 132.319]];
+  const coords = [[41.7687, 140.7288], [40.8222, 140.7474], [39.5933, 140.5533], [39.316, 141.533], [38.998, 141.247], [38.2682, 140.8694], [38.373, 141.061], [38.0, 140.62], [38.571, 140.527], [38.311, 140.434], [37.4947, 139.929], [37.3075, 139.8744], [36.757, 139.598], [35.6895, 139.6917], [35.232, 139.106], [36.561, 136.656], [35.5699, 135.1961], [35.667, 135.2], [35.0116, 135.768], [34.685, 135.805], [34.6937, 135.5023], [34.402, 131.061], [34.3955, 132.4536], [34.295, 132.319]];
+  const zones = [{"name": "Best around Mar 28\u2013Apr 1", "color": "#ec4899", "stops": [["Tokyo / Hakone", 35.55, 139.4, "Tokyo full bloom ~ Mar 25; nearby Kanto cities are already in bloom by Mar 28."], ["Kyoto / Nara / Osaka", 34.88, 135.7, "Kyoto full bloom ~ Mar 30; Nara ~ Mar 31; Osaka ~ Mar 31."], ["Hiroshima / Miyajima", 34.35, 132.4, "Hiroshima full bloom ~ Mar 28."]]}, {"name": "Best around Apr 2\u2013Apr 7", "color": "#f59e0b", "stops": [["Kanazawa / Amanohashidate / Ine", 36.1, 135.85, "Kanazawa full bloom ~ Apr 3; nearby Sea of Japan coast generally early April."], ["Sendai / Matsushima / Geibikei", 38.55, 141.02, "Sendai full bloom ~ Apr 2."], ["Yamadera / Ginzan / Zao", 38.29, 140.52, "Yamagata full bloom ~ Apr 7."], ["Aizu / Ouchi-juku / Nikko", 37.2, 139.85, "Fukushima full bloom ~ Apr 2; Utsunomiya full bloom ~ Mar 28."]]}, {"name": "Best around Apr 11\u2013Apr 16", "color": "#10b981", "stops": [["Kakunodate / Akita", 39.59, 140.55, "Akita full bloom ~ Apr 11."], ["Aomori", 40.82, 140.75, "Aomori full bloom ~ Apr 16."]]}, {"name": "Best around Apr 20\u2013Apr 24", "color": "#3b82f6", "stops": [["Hakodate", 41.77, 140.73, "Hakodate full bloom ~ Apr 24."]]}];
+
+  function numberIcon(num) {
+    return L.divIcon({
+      html: '<div class="pin">' + num + '</div>',
+      className: '',
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+      popupAnchor: [0, -12]
+    });
+  }
+
+  stops.forEach((s, i) => {
+    const marker = L.marker([s[1], s[2]], { icon: numberIcon(i + 1) }).addTo(map);
+    marker.bindPopup('<b>' + s[0] + '</b>');
+  });
+
+  const route = L.polyline(coords, {
+    color: '#2563eb',
+    weight: 4,
+    opacity: 0.9
+  }).addTo(map);
+
+  zones.forEach(group => {
+    group.stops.forEach(z => {
+      const circle = L.circle([z[1], z[2]], {
+        radius: 32000,
+        color: group.color,
+        fillColor: group.color,
+        fillOpacity: 0.22,
+        weight: 2
+      }).addTo(map);
+      circle.bindPopup('<b>' + z[0] + '</b><br><br>' + z[3] + '<br><br><b>Window:</b> ' + group.name);
+    });
+  });
+
+  map.fitBounds(route.getBounds(), { padding: [30, 30] });
+</script>
+</body>
+</html>
