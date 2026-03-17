@@ -10,12 +10,9 @@
       --bg-1: #120f1f;
       --bg-2: #1d1630;
       --bg-3: #2a1f45;
-      --card: rgba(255, 255, 255, 0.08);
       --card-border: rgba(255, 255, 255, 0.14);
       --text: #f6f1ff;
       --muted: rgba(246, 241, 255, 0.72);
-      --accent: #c9a6ff;
-      --accent-2: #89e3ff;
       --shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
     }
 
@@ -63,13 +60,8 @@
       animation: twinkle 3.2s ease-in-out infinite;
     }
 
-    .star:nth-child(odd) {
-      animation-duration: 4.6s;
-    }
-
-    .star:nth-child(3n) {
-      animation-duration: 5.4s;
-    }
+    .star:nth-child(odd) { animation-duration: 4.6s; }
+    .star:nth-child(3n) { animation-duration: 5.4s; }
 
     @keyframes twinkle {
       0%, 100% { opacity: 0.2; transform: scale(0.9); }
@@ -114,15 +106,9 @@
     }
 
     @keyframes vortex {
-      0% {
-        transform: scale(0.55) rotate(0deg);
-      }
-      50% {
-        transform: scale(0.62) rotate(180deg);
-      }
-      100% {
-        transform: scale(0.55) rotate(360deg);
-      }
+      0% { transform: scale(0.55) rotate(0deg); }
+      50% { transform: scale(0.62) rotate(180deg); }
+      100% { transform: scale(0.55) rotate(360deg); }
     }
 
     .floating {
@@ -192,42 +178,32 @@
       box-shadow: var(--shadow);
     }
 
-    h1 {
-      margin: 18px 0 12px;
-      font-size: clamp(42px, 7vw, 76px);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      font-weight: 800;
-    }
-
-    h1 .gradient {
-      background: linear-gradient(135deg, #ffffff, #d9c2ff 35%, #93ecff 75%, #ffffff);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-    }
-
     .subtitle {
       max-width: 720px;
-      margin: 0 auto;
+      margin: 14px auto 0;
       font-size: 18px;
       line-height: 1.6;
       color: var(--muted);
     }
 
-    .quote {
-      margin: 18px auto 0;
-      max-width: 640px;
-      font-size: 14px;
-      color: rgba(246, 241, 255, 0.58);
-      font-style: italic;
+    .content-section {
+      margin-top: 42px;
+    }
+
+    .section-header {
+      margin-bottom: 18px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: -0.02em;
     }
 
     .trip-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 18px;
-      margin-top: 42px;
     }
 
     .trip-card {
@@ -294,18 +270,6 @@
       opacity: 1;
     }
 
-    .footer {
-      margin-top: 48px;
-      text-align: center;
-      font-size: 13px;
-      color: rgba(246, 241, 255, 0.52);
-    }
-
-    .footer strong {
-      color: rgba(246, 241, 255, 0.74);
-      font-weight: 600;
-    }
-
     @media (max-width: 640px) {
       .container {
         padding-top: 56px;
@@ -354,20 +318,23 @@
 
   <main class="container">
     <section class="hero">
-      <div class="eyebrow">🐇 HARRY'S RABBIT HOLE</div>
-      <p class="subtitle">
-        Musings, plans and assorted docs
-      </p>
+      <div class="eyebrow">HARRY'S 🐇 HOLE</div>
+      <p class="subtitle">Musings, plans and assorted docs</p>
     </section>
 
-    <section class="trip-grid">
-      <a class="trip-card" href="japan/2026/">
-        <div class="trip-card-inner">
-          <div class="country">🇯🇵 Japan</div>
-          <div class="year">2026</div>
-          <div class="cta">Open map <span>→</span></div>
-        </div>
-      </a>
+    <section class="content-section">
+      <div class="section-header">
+        <h2>Trips</h2>
+      </div>
+      <div class="trip-grid">
+        <a class="trip-card" href="trip/japan/2026/">
+          <div class="trip-card-inner">
+            <div class="country">🇯🇵 Japan</div>
+            <div class="year">2026</div>
+            <div class="cta">Open <span>→</span></div>
+          </div>
+        </a>
+      </div>
     </section>
   </main>
 </body>
