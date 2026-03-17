@@ -1,0 +1,34 @@
+name: Build trip maps
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-maps:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build docs folder
+        run: |
+          rm -rf docs
+          mkdir -p docs
+
+          find trips -type f -name "map.html" | while read file; do
+            rel="${file#trips/}"                 # Japan/2026/map.html
+            country="$(echo "$rel" | cut -d/ -f1 | tr '[:upper:]' '[:lower:]')"
+            year="$(echo "$rel" | cut -d/ -f2)"
+
+            mkdir -p "docs/$country/$year"
+            cp "$file" "docs/$country/$year/index.html"
+          done
+
+      - name: Commit docs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs
+          git diff --cached --quiet || git commit -m "Update published trip maps"
+          git push
